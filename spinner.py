@@ -1,24 +1,31 @@
 import tkinter as tk
 from shuffle import generate
 import math, time, sys, random
+from PIL import ImageTk
 
 class SpinningWheel:
     def __init__(self, master, mapped):
 
         # Create TK object
         self.master = master
-        master.title("Secret Santa")
+        self.master.title("Secret Santa")
+        self.master.resizable(False, False)
+
+        # Background color 
+        self.background_color = "#f2e8cf"
 
         # Create canvas
         self.size = 800
         self.center = self.size/2
-        self.canvas = tk.Canvas(master, width=self.size, height=self.size)
+        self.canvas = tk.Canvas(master, width=self.size, height=self.size, bg=self.background_color)
         self.canvas.pack()
 
         # Save the member assignment 
         self.mapped = mapped
         
         # Define wheel colors and names of the members
+        self.outline_color = "#cffcff"
+        self.arrow_color = "#43291f"
         self.colors = ["#003e1f", "#d90429"]
         self.names = list(mapped)
         random.shuffle(self.names)
@@ -35,6 +42,8 @@ class SpinningWheel:
         # Result label
         self.result_label = tk.Label(master, text="", font=("Arial", 24, "bold"))
         self.result_label.pack()
+        self.result_label.config(bg=self.background_color)
+        self.result_label.place(x = 3/8 * self.size, y=15/16 * self.size)
 
         # Start button
         self.start_btn = tk.Button(master, text="Spin", command=self.spin)
@@ -55,7 +64,7 @@ class SpinningWheel:
                                 self.center, 100, 
                                 arrow=tk.LAST,
                                 arrowshape=(20, 30, 30),
-                                fill="#43291f",
+                                fill=self.arrow_color,
                                 width=10,
                                 )
     # draw wheel
@@ -76,7 +85,7 @@ class SpinningWheel:
                 self.center, 
                 x0, y0, x1, y1,
                 fill=self.colors[i % len(self.colors)],
-                outline='#f2e8cf',
+                outline=self.outline_color,
                 width=4,)
 
             # Place names in the center of the segments
