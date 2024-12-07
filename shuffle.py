@@ -1,11 +1,12 @@
 from copy import deepcopy
 from random import Random
 from pprint import pprint
-
-with open("list.txt", 'r') as f:
-    members = [s.strip() for s in f.readlines()]
+import sys
 
 def generate(seed = None):
+    with open("list.txt", 'r') as f:
+        members = [s.strip() for s in f.readlines()]
+
     if (seed == None):
         seed = Random().randint(1, 1_000)
 
@@ -27,6 +28,12 @@ def generate(seed = None):
 
     return seed, mapped
 
-seed, mapped = generate()
-print(seed)
-pprint(mapped)
+
+if __name__ == "__main__":
+    try:
+        seed, mapped = generate( int(sys.argv[1]) )
+    except:
+        seed, mapped = generate()
+
+    print(seed)
+    pprint(mapped)
