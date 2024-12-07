@@ -5,33 +5,28 @@ from pprint import pprint
 with open("list.txt", 'r') as f:
     members = [s.strip() for s in f.readlines()]
 
-selected = deepcopy(members)
+def generate(seed = None):
+    if (seed == None):
+        seed = Random().randint(1, 1_000)
 
-with open("seed.txt", 'r') as f:
-    seed = f.read().strip()
-    print(seed)
+    selected = deepcopy(members)
+    Random(seed).shuffle(selected)
 
-done = False
-
-while(not done):
-    tmp = Random().randint(1, 1_000)
-
-    Random(tmp).shuffle(selected)
-
-    done = True
-
+    bad = False
     for i, j in zip(members, selected):
         if (i == j):
-            done = False
+            bad = True
             break
+
+    if (bad):
+        return generate()
     
-    if done:
-        with open("good.txt", 'w') as f:
-            f.write(str(tmp))
+    mapped = {}
+    for i, j in zip(members, selected):
+        mapped[i] = j
 
-mapped = {}
+    return seed, mapped
 
-for i, j in zip(members, selected):
-    mapped[i] = j
-
+seed, mapped = generate()
+print(seed)
 pprint(mapped)
