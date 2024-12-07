@@ -1,18 +1,13 @@
 import tkinter as tk
 from shuffle import generate
-from random import shuffle
-import math, time, sys
+import math, time, sys, random
 
 class SpinningWheel:
     def __init__(self, master, mapped):
+
+        # Create TK object
         self.master = master
         master.title("Secret Santa")
-
-        # Define colors and names
-        self.colors = ["#003e1f", "#d90429"]
-        self.mapped = mapped
-        self.names = list(mapped)
-        shuffle(self.names)
 
         # Create canvas
         self.size = 800
@@ -20,13 +15,19 @@ class SpinningWheel:
         self.canvas = tk.Canvas(master, width=self.size, height=self.size)
         self.canvas.pack()
 
-        # Compute polygon size
-        self.segment_angle = 360 / len(self.names)
+        # Save the member assignment 
+        self.mapped = mapped
+        
+        # Define wheel colors and names of the members
+        self.colors = ["#003e1f", "#d90429"]
+        self.names = list(mapped)
+        random.shuffle(self.names)
 
-        # rotate the wheel so the top aligns with the first element
+        # Compute polygon angle size and the rotation angle so the top aligns with the first element
+        self.segment_angle = 360 / len(self.names)
         self.rotate_angle = math.radians(360/4 + self.segment_angle/2)
 
-        # Create wheel
+        # Create initial wheel
         self.radius = 3/8 * self.size
         self.angle = 0
         self.draw_wheel()
@@ -48,9 +49,8 @@ class SpinningWheel:
         self.menu.pack()
         self.menu.place(x=1/8 * self.size, y=1/16 * self.size)
 
-    # draw arrow
+    # Create the arrow pointing downwards
     def draw_arrow(self):
-        # Create the arrow pointing downwards
         self.canvas.create_line(self.center, 0, 
                                 self.center, 100, 
                                 arrow=tk.LAST,
@@ -60,7 +60,6 @@ class SpinningWheel:
                                 )
     # draw wheel
     def draw_wheel(self):
-        
         self.draw_arrow()
 
         for i, name in enumerate(self.names):
@@ -83,6 +82,7 @@ class SpinningWheel:
             # Place names in the center of the segments
             self.place_name(name, (start_angle, end_angle))
 
+    # place the name inside the triangle polygon
     def place_name(self, name, angles):
         # place name at the center of the polygon segment
         mid_angle = (angles[0] + angles[1]) / 2
@@ -90,35 +90,35 @@ class SpinningWheel:
         y = self.center + (self.radius / 2) * math.sin(mid_angle)
         self.canvas.create_text(x, y, text=name, font=("Arial", 12, "bold"), fill="black")
 
+    # spin the wheel and print the result
     def spin(self):
-
         self.result_label.config(text="")
 
         if (self.user.get() in self.mapped):
-            self.angle = 0
             self.animate_spin()
-
             self.result_label.config(text=mapped[self.user.get()])
+
         else:
             self.result_label.config(text="Error: Select an User !!")
 
-
+    # create the spin animation, ending exactly where the result should be
     def animate_spin(self):
-        # find the position of the selected label
+        self.angle = 0
+
+        # find the position of the result label
         expected = mapped[ self.user.get() ]
         idx = self.names.index(expected)
 
+        # define the spinning speed
         self.speed = 6
         
-        # 9 complete loops and a few less
-        loops = int((10*360 - idx * self.segment_angle)/self.speed)
+        # 6 loops (the last one is shorter)
+        loops = 6
+        reps = int((loops*360 - (idx * self.segment_angle))/self.speed)
 
-        for _ in range(loops):  # Number of frames for the spin animation
+        for _ in range(reps):  # Number of frames for the spin animation
             self.master.update()  # Refresh the Tkinter window
-
-            # each frame, the wheel moves the segment by 12 
-            self.angle += self.speed  # Reduce the angle for each frame
-
+            self.angle += self.speed  # Each frame, the angle is increased
             self.canvas.delete("all")  # Clear the canvas
             self.draw_wheel()  # Redraw the wheel at the new angle
             time.sleep(0.01)  # Delay for animation effect
