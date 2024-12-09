@@ -1,7 +1,6 @@
 import tkinter as tk
 from shuffle import generate
 import math, time, sys, random
-from PIL import ImageTk
 
 class SpinningWheel:
     def __init__(self, master, mapped):
@@ -43,12 +42,12 @@ class SpinningWheel:
         self.result_label = tk.Label(master, text="", font=("Arial", 24, "bold"))
         self.result_label.pack()
         self.result_label.config(bg=self.background_color)
-        self.result_label.place(x = 3/8 * self.size, y=15/16 * self.size)
+        self.result_label.place(x = 1/2 * self.size, y=15/16 * self.size, anchor="center")
 
         # Start button
         self.start_btn = tk.Button(master, text="Spin", command=self.spin)
         self.start_btn.pack()
-        self.start_btn.place(x=3/4 * self.size, y=1/16 * self.size)
+        self.start_btn.place(x=3/4 * self.size, y=1/16 * self.size, anchor="center")
 
         # Create Dropdawn list
         self.sorted_names = sorted(self.names)
@@ -56,7 +55,7 @@ class SpinningWheel:
         self.user.set("Select the user:") # default value
         self.menu = tk.OptionMenu(self.master, self.user, *self.sorted_names)
         self.menu.pack()
-        self.menu.place(x=1/8 * self.size, y=1/16 * self.size)
+        self.menu.place(x=1/4 * self.size, y=1/16 * self.size, anchor="center")
 
     # Create the arrow pointing downwards
     def draw_arrow(self):
